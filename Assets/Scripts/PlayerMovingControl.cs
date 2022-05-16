@@ -6,8 +6,15 @@ using UnityEngine;
 public class PlayerMovingControl : MonoBehaviour
 {
     private CharacterController characterController;
-    public float speed = 5F;
+    public float walkSpeed = 10F;
+    public float runSpeed = 15F;
+    public float speed;
+    private bool runFlag = false;  //check if running
     public Vector3 moveDirection;
+
+    // keyboard input settings
+    [Header("Keyboard settings")]
+    [SerializeField][Tooltip("Press this key to run")] private KeyCode runInputKey = KeyCode.LeftShift;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,15 +27,19 @@ public class PlayerMovingControl : MonoBehaviour
         Move();
     }
 
-    void Move() {
+    void Move()
+    {
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
 
-        moveDirection = (transform.right * hor + transform.forward * ver).normalized;  //get the moveDirection, and normalize the vector
+        runFlag = Input.GetKey(runInputKey);
+        speed = runFlag ? runSpeed : walkSpeed;
+        //Debug.Log(runFlag);
 
+        moveDirection = (transform.right * hor + transform.forward * ver).normalized;  //get the moveDirection, and normalize the vector
         characterController.Move(moveDirection * speed * Time.deltaTime);
 
-        // Debug.Log("hor: " + hor);
-        // Debug.Log("ver: " + ver);
+        //Debug.Log("hor: " + hor);
+        //Debug.Log("ver: " + ver);
     }
 }
