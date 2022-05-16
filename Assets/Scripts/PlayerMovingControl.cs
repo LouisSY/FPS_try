@@ -6,15 +6,20 @@ using UnityEngine;
 public class PlayerMovingControl : MonoBehaviour
 {
     private CharacterController characterController;
+
     public float walkSpeed = 10F;
     public float runSpeed = 15F;
     public float speed;
     private bool runFlag = false;  //check if running
     public Vector3 moveDirection;
 
+    public float jumpForce = 3F;
+    public Vector3 velocity;
+
     // keyboard input settings
     [Header("Keyboard settings")]
     [SerializeField][Tooltip("Press this key to run")] private KeyCode runInputKey = KeyCode.LeftShift;
+    [SerializeField][Tooltip("Press this key to jump")] private KeyCode jumpInputKey = KeyCode.Space;
     // Start is called before the first frame update
     void Start()
     {
@@ -41,5 +46,10 @@ public class PlayerMovingControl : MonoBehaviour
 
         //Debug.Log("hor: " + hor);
         //Debug.Log("ver: " + ver);
+    }
+
+    void Jump()
+    {
+
     }
 }

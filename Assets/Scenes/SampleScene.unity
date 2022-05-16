@@ -1314,8 +1314,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82b59f19f01d74b248ad95090f82b61e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  walkSpeed: 10
+  runSpeed: 15
+  speed: 0
   moveDirection: {x: 0, y: 0, z: 0}
+  jumpForce: 3
+  velocity: {x: 0, y: 0, z: 0}
+  runInputKey: 304
+  jumpInputKey: 32
 --- !u!143 &392918514
 CharacterController:
   m_ObjectHideFlags: 0
