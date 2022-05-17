@@ -23,6 +23,10 @@ public class PlayerMovingControl : MonoBehaviour
     public float gravityValue = -9.81F;
     public float jumpHeight = 1.0F;
 
+    // check slope
+    private float onSlopeForce = 6.5f;   // The force on the slope prevents the character from bouncing when going downhill
+    private float checkSlopeRayLength = 2.0f;  // the length of ray
+
     // keyboard input settings
     [Header("Keyboard settings")]
     [SerializeField][Tooltip("Press this key to run")] private KeyCode runInputKey = KeyCode.LeftShift;
@@ -46,19 +50,27 @@ public class PlayerMovingControl : MonoBehaviour
         {
             playerVelocity.y = 0f;
         }
+
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
 
         runFlag = Input.GetKey(runInputKey);
         speed = runFlag ? runSpeed : walkSpeed;
-        Debug.Log("run: " + runFlag);
+        //Debug.Log("run: " + runFlag);
 
         moveDirection = (transform.right * hor + transform.forward * ver).normalized;  //get the moveDirection, and normalize the vector
         characterController.Move(moveDirection * speed * Time.deltaTime);
 
         Jump();
+
         playerVelocity.y += gravityValue * Time.deltaTime;
         characterController.Move(playerVelocity * Time.deltaTime);
+
+        if (IsOnSlope())
+        {
+            characterController.Move(Vector3.down * characterController.height / 2 * onSlopeForce * Time.deltaTime);
+        }
+
         //Debug.Log("hor: " + hor);
         //Debug.Log("ver: " + ver);
     }
@@ -71,5 +83,26 @@ public class PlayerMovingControl : MonoBehaviour
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * gravityValue * -3.0F);
         }
+    }
+
+    public bool IsOnSlope()
+    {
+        if(jumpFlag)
+        {
+            return false;
+        }
+
+        RaycastHit hit;
+        bool generateRay = Physics.Raycast(transform.position, Vector3.down, out hit, characterController.height/2*checkSlopeRayLength);
+
+        if (generateRay)
+        {
+            if (hit.normal != Vector3.up)
+            {
+                return true;   // is on slope
+            }
+        }
+
+        return false;
     }
 }
