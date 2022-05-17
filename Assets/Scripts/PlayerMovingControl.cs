@@ -7,14 +7,21 @@ public class PlayerMovingControl : MonoBehaviour
 {
     private CharacterController characterController;
 
+    // Move and run
+    [Header("Move and run settings")]
     public float walkSpeed = 10F;
     public float runSpeed = 15F;
     public float speed;
     private bool runFlag = false;  //check if running
     public Vector3 moveDirection;
 
-    public float jumpForce = 3F;
-    public Vector3 velocity;
+    // Jump
+    [Header("Jump settings")]
+    public Vector3 playerVelocity;   // Player's y axis impulse changes
+    private bool jumpFlag = false;
+    private bool isGrounded = true;
+    public float gravityValue = -9.81F;
+    public float jumpHeight = 1.0F;
 
     // keyboard input settings
     [Header("Keyboard settings")]
@@ -34,22 +41,35 @@ public class PlayerMovingControl : MonoBehaviour
 
     void Move()
     {
+        isGrounded = characterController.isGrounded;
+        if(isGrounded && playerVelocity.y < 0f)
+        {
+            playerVelocity.y = 0f;
+        }
         float hor = Input.GetAxis("Horizontal");
         float ver = Input.GetAxis("Vertical");
 
         runFlag = Input.GetKey(runInputKey);
         speed = runFlag ? runSpeed : walkSpeed;
-        //Debug.Log(runFlag);
+        Debug.Log("run: " + runFlag);
 
         moveDirection = (transform.right * hor + transform.forward * ver).normalized;  //get the moveDirection, and normalize the vector
         characterController.Move(moveDirection * speed * Time.deltaTime);
 
+        Jump();
+        playerVelocity.y += gravityValue * Time.deltaTime;
+        characterController.Move(playerVelocity * Time.deltaTime);
         //Debug.Log("hor: " + hor);
         //Debug.Log("ver: " + ver);
     }
 
     void Jump()
     {
-
+        jumpFlag = Input.GetKey(jumpInputKey);
+        //Debug.Log(jumpFlag);
+        if(jumpFlag && isGrounded)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * gravityValue * -3.0F);
+        }
     }
 }
